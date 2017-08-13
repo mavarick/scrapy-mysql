@@ -23,19 +23,19 @@ def read_requirements(filename):
 
 
 setup(
-    name='scrapy_mysql',
+    name='scrapy-mysql',
     version=read_file('VERSION'),
     description="mysql based components for Scrapy.",
     long_description=read_rst('README.md'),
     author="Mavarick",
     author_email='mavarick.liu@yahoo.com',
-    url='https://github.com/mavarick/scrapy_mysql',
+    url='https://github.com/mavarick/scrapy-mysql',
     packages=['scrapy_mysql'],
     package_dir={'': './'},
     install_requires=read_requirements('requirements-install.txt'),
     include_package_data=True,
     license="MIT",
-    keywords='scrapy_mysql',
+    keywords='scrapy-mysql',
     classifiers=[
         'Development Status :: 1 - Beta',
         'Intended Audience :: Developers',
