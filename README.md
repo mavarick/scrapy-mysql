@@ -13,6 +13,29 @@
   
     1. Queue. Only one queue now is supported with one remote server. Of cause, you could set multiple remote server for multi spiders
     2. speed. the speed maybe much slower, cause network data transfering.
+
+## How to Use
+
+  1. set `scheduler`:
+
+```python
+SCHEDULER_QUEUE_CLASS = 'scrapy_mysql.queue.RemoteQueue'
+```
+     
+  2. set `MYSQL_REMOTE_PARAMS`
+  
+```python
+MYSQL_REMOTE_PARAMS = {
+    'SERVER': 'http://127.0.0.1:11011',
+    'AUTH_CODE': 'auth_code',
+}
+```
+
+  3. set get id function:
+  
+```python
+SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.utils.get_default_id"
+```
      
 ## Future work
 
