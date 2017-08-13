@@ -1,5 +1,4 @@
-import redis
-
+# defaults settings
 
 # For standalone use.
 PIPELINE_KEY = '%(spider)s:items'
@@ -20,3 +19,7 @@ MYSQL_REMOTE_PARAMS = {
 }
 
 SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.utils.get_default_id"
+
+# empty queue trying times
+EMPTY_QUEUE_TRY_TIME = 1
+EMPTY_QUEUE_SLEEP_TIME = 1

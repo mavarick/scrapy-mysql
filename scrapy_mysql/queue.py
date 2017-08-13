@@ -1,5 +1,6 @@
 from scrapy.utils.reqser import request_to_dict, request_from_dict
 from . import picklecompat
+from .exp import EmptyQueueException
 
 # EMPTY QUEUE RETURN CODE
 EMPTY_QUEUE_CODE = -1
@@ -101,7 +102,7 @@ class RemoteQueue(Base):
         code = resp['code']
         if code == EMPTY_QUEUE_CODE:
             # queue is empty
-            raise Exception("Queue is empty")
+            raise EmptyQueueException("Queue is empty")
         wrapped_request = resp['data']
         content = wrapped_request['content']
         if content:

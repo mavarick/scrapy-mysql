@@ -1,9 +1,11 @@
 import importlib
 
 import six
+import time
 from scrapy.utils.misc import load_object
 
 from . import connection, defaults
+from .exp import EmptyQueueException
 
 # TODO: add SCRAPY_JOB support.
 class Scheduler(object):
@@ -144,14 +146,21 @@ class Scheduler(object):
                 start_code, status['tsize'], status['qsize'])
             self.spider.log(msg)
 
-    # def close(self, reason):
-    #     pass
-    #
-    # def flush(self):
-    #     # if flush the queue
-    #     pass
+    def close(self, reason):
+        pass
+
+    def flush(self):
+        # if flush the queue
+        pass
+
+    def has_pending_requests(self):
+        return False
+
+    def __len__(self):
+        raise Exception("ERROR: can not get length of scheduler")
 
     def enqueue_request(self, request):
+        print "got here: enqueue: %s" % request.url
         req_id = self.get_request_id(request, self.spider)
         setattr(request, 'id', req_id)
         self.queue.push(request)
@@ -159,5 +168,14 @@ class Scheduler(object):
 
     def next_request(self):
         block_pop_timeout = self.idle_before_close
-        request = self.queue.pop(timeout=block_pop_timeout)
-        return request
+        try_cnt = 0
+        while 1:
+            try:
+                try_cnt += 1
+                request = self.queue.pop(timeout=block_pop_timeout)
+                return request
+            except EmptyQueueException:
+                if try_cnt > defaults.EMPTY_QUEUE_TRY_TIME:
+                    self.spider.log("[WARN]: queue is empty")
+                # time.sleep(defaults.EMPTY_QUEUE_SLEEP_TIME)
+                break
