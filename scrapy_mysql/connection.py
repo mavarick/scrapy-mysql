@@ -1,10 +1,6 @@
-import six
-from scrapy.utils.misc import load_object
-
-from . import defaults
-
 # api to remote mysql web server
-from utils.SpiderUrlApi import SpiderUrlApi
+from scrapy_mysql.SpiderUrlApi import SpiderUrlApi
+from . import defaults
 
 
 def get_mysql_from_settings(settings):
@@ -66,8 +62,8 @@ def get_mysql(**kwargs):
         Redis client instance.
 
     """
-    server = kwargs['server']
-    auth_code = kwargs['auth_code']
+    server = kwargs['SERVER']
+    auth_code = kwargs['AUTH_CODE']
     url_server = SpiderUrlApi(server, auth_code)
 
     return url_server

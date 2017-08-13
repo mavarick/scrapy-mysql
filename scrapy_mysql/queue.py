@@ -1,7 +1,5 @@
 from scrapy.utils.reqser import request_to_dict, request_from_dict
-import hashlib
 from . import picklecompat
-
 
 # EMPTY QUEUE RETURN CODE
 EMPTY_QUEUE_CODE = -1
@@ -44,12 +42,15 @@ class Base(object):
     def _encode_request(self, request):
         """Encode a request object"""
         obj = request_to_dict(request, self.spider)
+        obj['id'] = request.id
         return self.serializer.dumps(obj)
 
     def _decode_request(self, encoded_request):
         """Decode an request previously encoded"""
         obj = self.serializer.loads(encoded_request)
-        return request_from_dict(obj, self.spider)
+        request = request_from_dict(obj, self.spider)
+        setattr(request, 'id', obj['id'])
+        return request
 
     def __len__(self):
         """Return the length of the queue"""
@@ -74,7 +75,7 @@ class RemoteQueue(Base):
     """
     def push(self, request):
         url = request.url
-        id = hashlib.md5(url).hexdigest()
+        id = request.id
         priority = request.priority
         req_data = self._encode_request(request)
         source = self.spider.name
@@ -85,7 +86,6 @@ class RemoteQueue(Base):
             source=source,
             content=req_data
         )
-
         resp = self.server.insert(data)
         self.check_resp(resp)
 

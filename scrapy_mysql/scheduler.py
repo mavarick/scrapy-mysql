@@ -5,7 +5,6 @@ from scrapy.utils.misc import load_object
 
 from . import connection, defaults
 
-
 # TODO: add SCRAPY_JOB support.
 class Scheduler(object):
     """Mysql-based scheduler
@@ -31,7 +30,8 @@ class Scheduler(object):
                  queue_key=defaults.DEFAULT_QUEUE_KEY,
                  queue_cls=defaults.SCHEDULER_QUEUE_CLASS,
                  idle_before_close=0,
-                 serializer=None):
+                 serializer=None,
+                 func_get_id=defaults.SCHEDULER_FUNC_REQ_ID):
         """Initialize scheduler.
 
         Parameters
@@ -54,15 +54,15 @@ class Scheduler(object):
         self.server = server
         self.flush_on_start = flush_on_start
         self.queue_key = queue_key
-        self.queue_cls = queue_cls,
+        self.queue_cls = queue_cls
         self.idle_before_close = idle_before_close
         self.serializer = serializer
         self.stats = None
+        self.func_get_id = func_get_id
 
     @classmethod
     def from_settings(cls, settings):
         kwargs = {
-            'persist': settings.getbool('SCHEDULER_PERSIST'),
             'flush_on_start': settings.getbool('SCHEDULER_FLUSH_ON_START'),
             'idle_before_close': settings.getint('SCHEDULER_IDLE_BEFORE_CLOSE'),
         }
@@ -74,6 +74,7 @@ class Scheduler(object):
             'queue_key': 'SCHEDULER_QUEUE_KEY',
             # We use the default setting name to keep compatibility.
             'serializer': 'SCHEDULER_SERIALIZER',
+            'func_get_id': "SCHEDULER_FUNC_REQ_ID",
         }
         for name, setting_name in optional.items():
             val = settings.get(setting_name)
@@ -108,6 +109,7 @@ class Scheduler(object):
 
         # load queue module
         try:
+            print "queue class: %s" % self.queue_cls, type(self.queue_cls)
             self.queue = load_object(self.queue_cls)(
                 server=self.server,
                 spider=spider,
@@ -117,6 +119,11 @@ class Scheduler(object):
         except TypeError as e:
             raise ValueError("Failed to instantiate queue class '%s': %s",
                              self.queue_cls, e)
+
+        try:
+            self.get_request_id = load_object(self.func_get_id)
+        except:
+            raise Exception("Failed to load module [%s]" % self.func_get_id)
 
         # start queue
         self.spider.log("start queue")
@@ -145,6 +152,8 @@ class Scheduler(object):
     #     pass
 
     def enqueue_request(self, request):
+        req_id = self.get_request_id(request, self.spider)
+        setattr(request, 'id', req_id)
         self.queue.push(request)
         return True
 

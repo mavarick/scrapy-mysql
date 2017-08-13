@@ -44,8 +44,8 @@ class SpiderUrlApi(object):
         self.get_url = urlparse.urljoin(self.server, "get/")
         self.start_queue_url = urlparse.urljoin(self.server, "start/")
         self.stop_queue_url = urlparse.urljoin(self.server, "stop/")
-        self.queue_status_url = urlparse.urljoin(self.server, "status/")
-        self.api_queue_status_url = urlparse.urljoin(self.server, "api/status/")
+        self.queue_status_url = urlparse.urljoin(self.server, "api/status/")
+        # self.api_queue_status_url = urlparse.urljoin(self.server, "api/status/")
 
         self._auth_code = json.dumps(dict(auth_code=auth_code))
 
@@ -101,7 +101,7 @@ class SpiderUrlApi(object):
 
     @property
     def status(self):
-        return self._request(self.api_queue_status_url)
+        return self._request(self.queue_status_url)
 
 
 def test():

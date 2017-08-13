@@ -8,7 +8,7 @@ PIPELINE_KEY = '%(spider)s:items'
 DEFAULT_QUEUE_KEY = "dq"
 
 # scheduler
-SCHEDULER_QUEUE_CLASS = 'scrapy_mysql.queue.PriorityQueue'
+SCHEDULER_QUEUE_CLASS = 'scrapy_mysql.queue.RemoteQueue'
 
 # Sane connection defaults.
 # or use `MYSQL_URL_REMOTE_PARAMS` in scrapy settings
@@ -18,3 +18,5 @@ MYSQL_REMOTE_PARAMS = {
     'AUTH_CODE': 'auth_code',
     'QUEUE': DEFAULT_QUEUE_KEY,
 }
+
+SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.utils.get_default_id"
