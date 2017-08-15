@@ -12,3 +12,4 @@ def bytes_to_str(s, encoding='utf-8'):
 def get_default_id(request, spider):
     url = request.url
     return hashlib.md5(url).hexdigest()
+
