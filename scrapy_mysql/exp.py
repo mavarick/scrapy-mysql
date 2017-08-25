@@ -5,3 +5,7 @@
 
 class EmptyQueueException(Exception):
     pass
+
+
+class StartServerException(Exception):
+    pass

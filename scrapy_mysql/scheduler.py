@@ -7,6 +7,7 @@ from scrapy.utils.misc import load_object
 from . import connection, defaults
 from .exp import EmptyQueueException
 
+
 # TODO: add SCRAPY_JOB support.
 class Scheduler(object):
     """Mysql-based scheduler

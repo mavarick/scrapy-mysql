@@ -68,6 +68,3 @@ def get_mysql(**kwargs):
 
     return url_server
 
-
-class StartServerException(Exception):
-    pass
