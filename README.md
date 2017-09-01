@@ -37,8 +37,28 @@ MYSQL_REMOTE_PARAMS = {
 SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.utils.get_default_id"
 ```
      
+  4. use `ResponseErrMiddleware`. Main function is to change the request's status in remote database by calling relevant api in `SpiderUrlApi.py`
+  
+```python
+DOWNLOADER_MIDDLEWARES = {
+    # lower number: Engine side
+    'scrapy_mysql.ResponseErrMiddleware.ResponseErrMiddleware': 901,
+    # higher number : Downloader side
+}
+
+```
+
+  5. `SpiderUrlApi.py`. The Scheduler use this module to insert and fetch url request from remote database. 
+    
+     to save cookie and header data, use:
+       
+        1. request_to_dict(request, self.spider)
+        2. pickle.dumps(obj, protocol=-1)
+        3. base64.b64decode(obj)
+     
+     more detail see, `queue.py`
+
 ## Future work
 
-  1. errback.
-  2. mutilple queue in one server
-  3. better way, other than django+mysql, to support functions above.
+  1. mutilple queue in one server
+  2. better way, other than django+mysql, to support functions above.

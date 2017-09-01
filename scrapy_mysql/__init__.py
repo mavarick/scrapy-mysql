@@ -12,3 +12,5 @@ from connection import get_mysql, get_mysql_from_settings, from_settings
 from exp import EmptyQueueException
 
 from utils import bytes_to_str
+
+from ResponseErrMiddleware import ResponseErrMiddleware

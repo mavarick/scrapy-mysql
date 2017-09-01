@@ -2,13 +2,17 @@ import importlib
 
 import six
 import time
+import logging
 from scrapy.utils.misc import load_object
 
 from . import connection, defaults
 from .exp import EmptyQueueException
 
+sm_log = logging.getLogger("scrapy_mysql.scheduler")
+sm_log.setLevel(logging.INFO)
+sm_log.propagate = True
 
-# TODO: add SCRAPY_JOB support.
+
 class Scheduler(object):
     """Mysql-based scheduler
 
@@ -112,7 +116,7 @@ class Scheduler(object):
 
         # load queue module
         try:
-            print "queue class: %s" % self.queue_cls, type(self.queue_cls)
+            sm_log.info("queue class: %s" % self.queue_cls, type(self.queue_cls))
             self.queue = load_object(self.queue_cls)(
                 server=self.server,
                 spider=spider,
@@ -161,7 +165,6 @@ class Scheduler(object):
         raise Exception("ERROR: can not get length of scheduler")
 
     def enqueue_request(self, request):
-        print "got here: enqueue: %s" % request.url
         req_id = self.get_request_id(request, self.spider)
         setattr(request, 'id', req_id)
         self.queue.push(request)

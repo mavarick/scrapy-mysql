@@ -19,7 +19,12 @@ import urllib
 import urlparse
 import requests
 import json
+import logging
 
+# logging.basicConfig()
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.WARN)
+requests_log.propagate = True
 
 class SpiderUrlApi(object):
     def __init__(self, url, auth_code):
@@ -88,7 +93,8 @@ class SpiderUrlApi(object):
         return data
 
     def get(self, *args, **kwargs):
-        return self._request(self.get_url)
+        d = self._request(self.get_url)
+        return d
 
     def start_queue(self):
         return self._request(self.start_queue_url)

@@ -1,9 +1,16 @@
+
+import logging
+
 from scrapy.utils.reqser import request_to_dict, request_from_dict
 from . import picklecompat
 from .exp import EmptyQueueException
 
 # EMPTY QUEUE RETURN CODE
 EMPTY_QUEUE_CODE = -1
+
+sm_log = logging.getLogger("scrapy_mysql.queue")
+sm_log.setLevel(logging.INFO)
+sm_log.propagate = True
 
 
 class Base(object):
@@ -87,8 +94,13 @@ class RemoteQueue(Base):
             source=source,
             content=req_data
         )
+        sm_log.info("enqueue: [%s]" % url)
         resp = self.server.insert(data)
-        self.check_resp(resp)
+
+        code = resp['code']
+        if code != 0:
+            msg = "Error. code: [%s], msg: [%s], data: \n%s"%(code, resp['msg'], resp['data'])
+            raise QueueException(msg)
 
     def pop(self, queue="", by="", timeout=0):
         """ get url result from remote server, TODO
@@ -106,13 +118,10 @@ class RemoteQueue(Base):
         wrapped_request = resp['data']
         content = wrapped_request['content']
         if content:
-            return self._decode_request(content)
+            request = self._decode_request(content)
+            sm_log.info("dequeue: [%s]" % request.url)
+            return request
 
-    def check_resp(self, resp):
-        code = resp['code']
-        if code != 0:
-            msg = "Error. code: [%s], msg: [%s], data: \n%s"%(code, resp['msg'], resp['data'])
-            raise QueueException(msg)
 
     def __len__(self):
         pass
