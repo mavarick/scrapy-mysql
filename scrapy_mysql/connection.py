@@ -1,5 +1,5 @@
 # api to remote mysql web server
-from scrapy_mysql.SpiderUrlApi import SpiderUrlApi
+from scrapy_mysql.utils.SpiderUrlApi import SpiderUrlApi
 from . import defaults
 
 

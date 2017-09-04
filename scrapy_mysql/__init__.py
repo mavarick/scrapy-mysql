@@ -8,9 +8,6 @@ __all__ = ['connection', 'queue', 'SpiderUrlApi',
            'scheduler', 'FormRequest', 'Selector', 'Item', 'Field']
 
 from connection import get_mysql, get_mysql_from_settings, from_settings
-
 from exp import EmptyQueueException
-
+from scrapy_mysql.middlewares.ResponseErrMiddleware import ResponseErrMiddleware
 from utils import bytes_to_str
-
-from ResponseErrMiddleware import ResponseErrMiddleware
