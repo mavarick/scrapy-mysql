@@ -7,10 +7,7 @@ from scrapy.utils.misc import load_object
 
 from . import connection, defaults
 from .exp import EmptyQueueException
-
-sm_log = logging.getLogger("scrapy_mysql.scheduler")
-sm_log.setLevel(logging.INFO)
-sm_log.propagate = True
+from .logger import sm_log
 
 
 class Scheduler(object):
@@ -69,6 +66,7 @@ class Scheduler(object):
 
     @classmethod
     def from_settings(cls, settings):
+
         kwargs = {
             'flush_on_start': settings.getbool('SCHEDULER_FLUSH_ON_START'),
             'idle_before_close': settings.getint('SCHEDULER_IDLE_BEFORE_CLOSE'),
@@ -93,8 +91,8 @@ class Scheduler(object):
         #     kwargs['serializer'] = importlib.import_module(kwargs['serializer'])
 
         server = connection.from_settings(settings)
+
         # Ensure the connection is working.
-        # server.ping()
         # check server is active
         resp = server.queue_status()
         code = resp['code']
@@ -179,6 +177,7 @@ class Scheduler(object):
                 request = self.queue.pop(timeout=block_pop_timeout)
                 return request
             except EmptyQueueException:
+                self.spider.log("queue is empyty, Retry to get request from queue .. ")
                 if try_cnt > defaults.EMPTY_QUEUE_TRY_TIME:
                     self.spider.log("[WARN]: queue is empty")
                 # time.sleep(defaults.EMPTY_QUEUE_SLEEP_TIME)

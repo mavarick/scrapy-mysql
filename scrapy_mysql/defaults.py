@@ -18,7 +18,7 @@ MYSQL_REMOTE_PARAMS = {
     'QUEUE': DEFAULT_QUEUE_KEY,
 }
 
-SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.utils.get_default_id"
+SCHEDULER_FUNC_REQ_ID = "scrapy_mysql.tools.get_default_id"
 
 # empty queue trying times
 EMPTY_QUEUE_TRY_TIME = 1

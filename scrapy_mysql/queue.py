@@ -4,13 +4,10 @@ import logging
 from scrapy.utils.reqser import request_to_dict, request_from_dict
 from . import picklecompat
 from .exp import EmptyQueueException
+from .logger import sm_log
 
 # EMPTY QUEUE RETURN CODE
 EMPTY_QUEUE_CODE = -1
-
-sm_log = logging.getLogger("scrapy_mysql.queue")
-sm_log.setLevel(logging.INFO)
-sm_log.propagate = True
 
 
 class Base(object):
@@ -85,6 +82,7 @@ class RemoteQueue(Base):
         url = request.url
         id = request.id
         priority = request.priority
+
         req_data = self._encode_request(request)
         source = self.spider.name
         data = dict(
@@ -121,7 +119,6 @@ class RemoteQueue(Base):
             request = self._decode_request(content)
             sm_log.info("dequeue: [%s]" % request.url)
             return request
-
 
     def __len__(self):
         pass

@@ -1,6 +1,8 @@
 # api to remote mysql web server
-from scrapy_mysql.utils.SpiderUrlApi import SpiderUrlApi
+import logging
+from .utils.SpiderUrlApi import SpiderUrlApi
 from . import defaults
+from .logger import sm_log
 
 
 def get_mysql_from_settings(settings):
@@ -36,7 +38,6 @@ def get_mysql_from_settings(settings):
     """
     params = defaults.MYSQL_REMOTE_PARAMS.copy()
     params.update(settings.getdict('MYSQL_URL_REMOTE_PARAMS'))
-
     return get_mysql(**params)
 
 
@@ -68,3 +69,25 @@ def get_mysql(**kwargs):
 
     return url_server
 
+
+class Connection(object):
+    def __init__(self):
+        from scrapy.utils.project import get_project_settings
+        settings = get_project_settings()
+        conn = from_settings(settings)
+        self.conn = conn
+
+    def update_status(self, id, status=10, content=None):
+        data = dict(id=id, status=status)
+        if content is not None:
+            data['content'] = ""
+        resp = self.conn.update(data)
+        code = resp['code']
+        if code != 0:
+            msg = resp['msg']
+            data = resp['data']
+            sm_log.error("error to update status of id[%s] with code: [%s], msg:[%s], data:[%s]" % (
+                id, status, msg, data))
+
+
+conn = Connection()
