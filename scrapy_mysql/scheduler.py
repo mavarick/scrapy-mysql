@@ -4,13 +4,14 @@ import six
 import time
 import logging
 from scrapy.utils.misc import load_object
+from scrapy.core.scheduler import Scheduler as BaseScheduler
 
 from . import connection, defaults
 from .exp import EmptyQueueException
 from .logger import sm_log
 
 
-class Scheduler(object):
+class Scheduler(BaseScheduler):
     """Mysql-based scheduler
 
     Settings
@@ -114,7 +115,7 @@ class Scheduler(object):
 
         # load queue module
         try:
-            sm_log.info("queue class: %s" % self.queue_cls, type(self.queue_cls))
+            sm_log.info("queue class: %s" % self.queue_cls)
             self.queue = load_object(self.queue_cls)(
                 server=self.server,
                 spider=spider,

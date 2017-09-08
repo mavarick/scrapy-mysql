@@ -22,7 +22,7 @@ from scrapy import log
 """
 
 
-class ElasticSearchPipeline(object):
+class ESPipeline(object):
     def __init__(self):
 
         self.settings = get_project_settings()
